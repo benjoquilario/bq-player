@@ -2,6 +2,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from "zustand"
 
+type Subtitle = {
+  file: string
+  lang: string
+  language: string
+}
+
 type PlayerStore = {
   isFullScreen: boolean
   toggleFullScreen: () => void
@@ -26,6 +32,10 @@ type PlayerStore = {
   setCurrentQuality: (quality: string) => void
   progress: number
   goToPosition: (position: number) => void
+  subtitles: Subtitle[]
+  currentSubtitle: string
+  setSubtitles: (subtitles: Subtitle[]) => void
+  setCurrentSubtitle: (subtitle: string) => void
 }
 
 export const usePlayerStore = create<PlayerStore>()((set, get) => ({
@@ -40,11 +50,23 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
   qualities: [],
   currentQuality: "",
   progress: 0,
+  currentSubtitle: "",
+  subtitles: [],
   setCurrentQuality: (quality: string) => {
     set((_) => ({ currentQuality: quality }))
   },
   setQualities: (qualities: string[]) => {
     set((_) => ({ qualities: qualities }))
+  },
+  setSubtitles: (subtitles: Subtitle[]) => {
+    if (get().video) {
+      set((_) => ({ subtitles }))
+    }
+  },
+  setCurrentSubtitle: (subtitle: string) => {
+    if (get().video) {
+      set((_) => ({ currentSubtitle: subtitle }))
+    }
   },
   nextSeconds: (seconds: number) => {
     if (get().video) {

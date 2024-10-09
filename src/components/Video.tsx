@@ -1,19 +1,37 @@
 import { useEffect, useRef } from "react"
 import { usePlayerStore } from "@/store/player"
 import Hls, { HlsConfig } from "hls.js"
+import { parseNumberFromString } from "@/utils/utils"
 
 type VideoProps = {
   children?: React.ReactNode
   hlsConfig?: HlsConfig
   className?: string
   hlsVersion?: string
+  preferQuality?: (qualities: string[]) => string
   changeSourceUrl?: (currentSourceUrl: string, source: string) => string
 } & React.VideoHTMLAttributes<HTMLVideoElement>
 
 const Video = (props: VideoProps) => {
+  const {
+    src,
+    children,
+    hlsConfig,
+    autoPlay,
+    className,
+    preferQuality,
+    changeSourceUrl,
+  } = props
   const videoRef = useRef<HTMLVideoElement>(null)
   const hls = useRef<Hls | null>(null)
-  const { addVideoEventListeners, currentQuality } = usePlayerStore()
+  const {
+    addVideoEventListeners,
+    currentQuality,
+    setCurrentQuality,
+    setQualities,
+    setSubtitles,
+    setCurrentSubtitle,
+  } = usePlayerStore()
 
   useEffect(() => {
     if (!videoRef.current) return
@@ -30,12 +48,12 @@ const Video = (props: VideoProps) => {
 
       const _hls = new Hls({
         xhrSetup: (xhr, url) => {
-          const requestUrl = props.changeSourceUrl?.(url, props.src!) || url
+          const requestUrl = changeSourceUrl?.(url, src!) || url
 
           xhr.open("GET", requestUrl, true)
         },
         enableWorker: false,
-        ...props.hlsConfig,
+        ...hlsConfig,
       })
 
       _hls.subtitleTrack = -1
@@ -48,10 +66,10 @@ const Video = (props: VideoProps) => {
       }
 
       _hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-        _hls.loadSource(props.src!)
+        _hls.loadSource(src!)
 
         _hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          if (props.autoPlay) {
+          if (autoPlay) {
             videoRef?.current
               ?.play()
               .catch(() =>
@@ -61,7 +79,36 @@ const Video = (props: VideoProps) => {
               )
           }
 
+          if (!src) return
           if (!_hls.levels?.length) return
+
+          const levels: string[] = _hls.levels
+            .sort((a, b) => b.height - a.height)
+            .filter((level) => level.height)
+            .map((level) => `${level.height}p`)
+
+          const level = preferQuality?.(levels) || levels[0]
+          const levelIndex = _hls.levels.findIndex(
+            (hlsLevel) => hlsLevel.height === parseNumberFromString(level)
+          )
+
+          _hls.currentLevel = levelIndex
+
+          setCurrentQuality(level)
+          setQualities(levels)
+        })
+
+        _hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, (_, event) => {
+          const modifiedSubtitles = event.subtitleTracks.map(
+            (track, index) => ({
+              file: track.details?.fragments?.[0].url || track.url,
+              lang: track.lang || index.toString(),
+              language: track.name,
+            })
+          )
+
+          setSubtitles(modifiedSubtitles)
+          setCurrentSubtitle(modifiedSubtitles[0]?.lang)
         })
       })
 
@@ -88,6 +135,10 @@ const Video = (props: VideoProps) => {
     // Check for Media Source support
     if (Hls.isSupported()) {
       _initPlayer()
+    } else {
+      if (videoRef.current?.canPlayType("application/vnd.apple.mpegurl")) {
+        videoRef.current.src = src!
+      }
     }
 
     return () => {
@@ -96,7 +147,7 @@ const Video = (props: VideoProps) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.src, props.hlsConfig])
+  }, [src, hlsConfig])
 
   if (Hls.isSupported())
     return (
