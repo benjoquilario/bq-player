@@ -1,8 +1,8 @@
-import './App.css';
-import Player from './components/Player';
+import "./App.css"
+import Player from "@/components/Player"
 
 function App() {
-  return <Player />;
+  return <Player />
 }
 
-export default App;
+export default App
