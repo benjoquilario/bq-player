@@ -1,7 +1,7 @@
 // credits to: https://github.com/hoangvu12/netplayer/blob/main/src/components/Subtitle/Subtitle.tsx
 
 import { useMemo, useState, useEffect } from "react"
-import { requestSubtitle } from "@/utils/subtitle"
+import { requestSubtitle } from "@/lib/subtitle"
 import { usePlayerStore } from "@/store/player"
 import { parse } from "@plussub/srt-vtt-parser"
 

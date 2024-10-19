@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useCallback } from "react"
 import { usePlayerStore } from "@/store/player"
 import Hls, { HlsConfig } from "hls.js"
-import { parseNumberFromString } from "@/utils/utils"
-import { cn } from "@/utils/utils"
+import { parseNumberFromString } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 
 export type VideoProps = {
   children?: React.ReactNode
@@ -13,7 +13,7 @@ export type VideoProps = {
   changeSourceUrl?: (currentSourceUrl: string, source: string) => string
 } & React.VideoHTMLAttributes<HTMLVideoElement>
 
-const Video = (props: VideoProps) => {
+const Video = React.forwardRef<HTMLVideoElement, VideoProps>((props, ref) => {
   const {
     src,
     children,
@@ -23,11 +23,10 @@ const Video = (props: VideoProps) => {
     preferQuality,
     changeSourceUrl,
   } = props
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const videoRef = useRef<HTMLVideoElement>()
   const hls = useRef<Hls | null>(null)
   const {
     addVideoEventListeners,
-    currentQuality,
     setCurrentQuality,
     setQualities,
     setSubtitles,
@@ -40,6 +39,18 @@ const Video = (props: VideoProps) => {
     addVideoEventListeners(videoRef.current)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const playerRef = useCallback(
+    (node: any) => {
+      videoRef.current = node
+      if (typeof ref === "function") {
+        ref(node)
+      } else if (ref) {
+        ;(ref as React.MutableRefObject<HTMLVideoElement>).current = node
+      }
+    },
+    [ref]
+  )
 
   useEffect(() => {
     function _initPlayer() {
@@ -154,7 +165,7 @@ const Video = (props: VideoProps) => {
 
   return (
     <video
-      ref={videoRef}
+      ref={playerRef}
       autoPlay={autoPlay}
       preload="auto"
       // className={styles.video}
@@ -166,5 +177,6 @@ const Video = (props: VideoProps) => {
       {children}
     </video>
   )
-}
+})
+
 export default Video

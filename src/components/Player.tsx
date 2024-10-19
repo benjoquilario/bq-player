@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useMemo } from "react"
+import React, { useRef, useState, useEffect, useMemo } from "react"
 import Video, { type VideoProps } from "./Video"
 import { usePlayerStore } from "@/store/player"
 import Subtitle from "./Subtitle"
@@ -10,7 +10,7 @@ type PlayerProps = {
   subtitles?: ISubtitle[]
 } & VideoProps
 
-const Player: React.FC<PlayerProps> = (props) => {
+const Player = React.forwardRef<HTMLVideoElement, PlayerProps>((props, ref) => {
   const divEl = useRef<HTMLDivElement>(null)
   const {
     addPlayerEventListeners,
@@ -92,7 +92,7 @@ const Player: React.FC<PlayerProps> = (props) => {
         ref={divEl}
         style={{ position: "relative", overflow: "hidden" }}
       >
-        <Video {...props} src={src} playsInline autoPlay={true} />
+        <Video ref={ref} {...props} src={src} playsInline autoPlay={true} />
 
         <Subtitle />
       </div>
@@ -102,5 +102,6 @@ const Player: React.FC<PlayerProps> = (props) => {
       </div>
     </>
   )
-}
+})
+
 export default Player

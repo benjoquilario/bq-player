@@ -196,7 +196,11 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
     }
   },
   play() {
-    get().videoEl.play()
+    const promise = get().videoEl.play()
+
+    if (promise) {
+      promise.catch()
+    }
     set((_) => ({ isPlaying: true }))
   },
   pause() {

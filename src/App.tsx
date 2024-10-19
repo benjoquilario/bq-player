@@ -1,9 +1,14 @@
 import "./App.css"
 import Player from "@/components/Player"
 
+import * as React from "react"
+
 function App() {
+  const playerRef = React.useRef<HTMLVideoElement>(null)
+
   return (
     <Player
+      ref={playerRef}
       sources={[
         {
           file: "https://www088.anzeat.pro/streamhls/0b594d900f47daabc194844092384914/ep.1.1703914189.m3u8",
