@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from "zustand"
 
-type Subtitle = {
+export type Subtitle = {
   file: string
   lang: string
   language: string
@@ -11,8 +11,8 @@ type Subtitle = {
 type PlayerStore = {
   isFullScreen: boolean
   toggleFullScreen: () => void
-  player: HTMLDivElement
-  video: HTMLVideoElement
+  playerEl: HTMLDivElement
+  videoEl: HTMLVideoElement
   addPlayerEventListeners: (el: HTMLDivElement) => void
   addVideoEventListeners: (el: HTMLVideoElement) => void
   isPlaying: boolean
@@ -39,8 +39,8 @@ type PlayerStore = {
 }
 
 export const usePlayerStore = create<PlayerStore>()((set, get) => ({
-  player: null as any,
-  video: null as any,
+  playerEl: null as any,
+  videoEl: null as any,
   isPlaying: false,
   showControls: false,
   isPaused: false,
@@ -59,22 +59,22 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
     set((_) => ({ qualities: qualities }))
   },
   setSubtitles: (subtitles: Subtitle[]) => {
-    if (get().video) {
+    if (get().videoEl) {
       set((_) => ({ subtitles }))
     }
   },
   setCurrentSubtitle: (subtitle: string) => {
-    if (get().video) {
+    if (get().videoEl) {
       set((_) => ({ currentSubtitle: subtitle }))
     }
   },
   nextSeconds: (seconds: number) => {
-    if (get().video) {
-      const current = get().video.currentTime
-      const total = get().video.duration
+    if (get().videoEl) {
+      const current = get().videoEl.currentTime
+      const total = get().videoEl.duration
 
       if (current + seconds >= total - 2) {
-        get().video.currentTime = total - 1
+        get().videoEl.currentTime = total - 1
 
         set((_) => ({ progress: total - 1 }))
         return
@@ -82,22 +82,22 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
     }
   },
   previousSeconds: (seconds: number) => {
-    if (get().video) {
-      const current = get().video.currentTime
+    if (get().videoEl) {
+      const current = get().videoEl.currentTime
 
       if (current - seconds <= 0) {
-        get().video.currentTime = 0
+        get().videoEl.currentTime = 0
         set((_) => ({ progress: 0 }))
         return
       }
 
-      get().video.currentTime -= seconds
+      get().videoEl.currentTime -= seconds
       set((_) => ({ progress: current - seconds }))
     }
   },
   setPlaybackRate: (rate: number) => {
-    if (get().video) {
-      get().video.playbackRate = rate
+    if (get().videoEl) {
+      get().videoEl.playbackRate = rate
       set((_) => ({ playbackRate: rate }))
     }
   },
@@ -115,7 +115,7 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
     let timer: any
 
     set((_) => ({
-      player: root,
+      playerEl: root,
     }))
 
     root.addEventListener("mouseenter", () => {
@@ -133,58 +133,58 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
       }, 2500)
     })
   },
-  addVideoEventListeners: (video) => {
+  addVideoEventListeners: (videoEl) => {
     set((_) => ({
-      video,
+      videoEl,
     }))
 
-    video.addEventListener("play", () => {
+    videoEl.addEventListener("play", () => {
       set((_) => ({ isPlaying: true, isPaused: false }))
     })
-    video.addEventListener("pause", () => {
+    videoEl.addEventListener("pause", () => {
       set((_) => ({ isPlaying: false, isPaused: false, showControls: true }))
     })
-    video.addEventListener("ended", () => {
+    videoEl.addEventListener("ended", () => {
       set((_) => ({ isPlaying: false, isPaused: false, showControls: true }))
     })
-    video.addEventListener("click", () => {
+    videoEl.addEventListener("click", () => {
       if (get().isPlaying) {
-        video.pause()
-        get().video.pause()
+        videoEl.pause()
+        get().videoEl.pause()
         set((_) => ({ isPaused: true }))
       } else {
-        video.play()
+        videoEl.play()
         set((_) => ({ isPaused: false }))
       }
     })
-    video.addEventListener("pause", () => {
+    videoEl.addEventListener("pause", () => {
       set((_) => ({ isPaused: true }))
     })
-    video.addEventListener("playing", () => {
+    videoEl.addEventListener("playing", () => {
       set((_) => ({ isLoading: false, isPlaying: true }))
     })
-    video.addEventListener("waiting", () => {
+    videoEl.addEventListener("waiting", () => {
       set((_) => ({ isLoading: true }))
     })
 
-    video.addEventListener("loadedmetadata", () => {
+    videoEl.addEventListener("loadedmetadata", () => {
       set((_) => ({ isLoading: false }))
     })
-    video.addEventListener("volumechange", () => {
-      set((_) => ({ volume: video.volume }))
+    videoEl.addEventListener("volumechange", () => {
+      set((_) => ({ volume: videoEl.volume }))
     })
 
-    video.addEventListener("ratechange", () => {
-      set((_) => ({ playbackRate: video.playbackRate }))
+    videoEl.addEventListener("ratechange", () => {
+      set((_) => ({ playbackRate: videoEl.playbackRate }))
     })
 
-    video.addEventListener("fullscreenchange", () => {
+    videoEl.addEventListener("fullscreenchange", () => {
       set((_) => ({ isFullScreen: !!document.fullscreenElement }))
     })
   },
   goToPosition: (position: number) => {
-    if (get().video) {
-      get().video.currentTime = position
+    if (get().videoEl) {
+      get().videoEl.currentTime = position
       set((_) => ({ progress: position }))
     }
   },
@@ -196,11 +196,11 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
     }
   },
   play() {
-    get().video.play()
+    get().videoEl.play()
     set((_) => ({ isPlaying: true }))
   },
   pause() {
-    get().video.pause()
+    get().videoEl.pause()
     set((_) => ({ isPlaying: false }))
   },
 }))

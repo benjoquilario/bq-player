@@ -2,8 +2,9 @@ import { useEffect, useRef } from "react"
 import { usePlayerStore } from "@/store/player"
 import Hls, { HlsConfig } from "hls.js"
 import { parseNumberFromString } from "@/utils/utils"
+import { cn } from "@/utils/utils"
 
-type VideoProps = {
+export type VideoProps = {
   children?: React.ReactNode
   hlsConfig?: HlsConfig
   className?: string
@@ -124,6 +125,8 @@ const Video = (props: VideoProps) => {
               break
             default:
               _initPlayer()
+              _hls.destroy()
+
               break
           }
         }
@@ -149,29 +152,18 @@ const Video = (props: VideoProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src, hlsConfig])
 
-  if (Hls.isSupported())
-    return (
-      <video
-        className="absolute inset-0 h-full w-full bg-black"
-        playsInline
-        crossOrigin="anonymous"
-        ref={videoRef}
-        {...props}
-      />
-    )
-
   return (
     <video
       ref={videoRef}
-      autoPlay={props.autoPlay}
+      autoPlay={autoPlay}
       preload="auto"
       // className={styles.video}
       playsInline
       crossOrigin="anonymous"
       {...props}
-      className="absolute inset-0 h-full w-full bg-black"
+      className={cn("absolute inset-0 h-full w-full bg-black", className)}
     >
-      {props.children}
+      {children}
     </video>
   )
 }
