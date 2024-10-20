@@ -25,8 +25,8 @@ type PlayerStore = {
   setPlaybackRate: (rate: number) => void
   pause: () => void
   play: () => void
-  nextSeconds: (seconds: number) => void
-  previousSeconds: (seconds: number) => void
+  skipForwardSeconds: (seconds: number) => void
+  skipBackwardSeconds: (seconds: number) => void
   qualities: string[]
   setQualities: (qualities: string[]) => void
   currentQuality: string | null
@@ -70,20 +70,21 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
       set((_) => ({ currentSubtitle: subtitle }))
     }
   },
-  nextSeconds: (seconds: number) => {
+  skipForwardSeconds: (seconds: number) => {
     if (get().videoEl) {
       const current = get().videoEl.currentTime
-      const total = get().videoEl.duration
-
-      if (current + seconds >= total - 2) {
-        get().videoEl.currentTime = total - 1
-
-        set((_) => ({ progress: total - 1 }))
+      
+      if (current + seconds >= get().videoEl.duration) {
+        get().videoEl.currentTime = get().videoEl.duration
+        set((_) => ({ progress: get().videoEl.duration }))
         return
       }
+
+      get().videoEl.currentTime += seconds
+      set((_)=> ({ progress: current + seconds }))
     }
   },
-  previousSeconds: (seconds: number) => {
+  skipBackwardSeconds: (seconds: number) => {
     if (get().videoEl) {
       const current = get().videoEl.currentTime
 
@@ -200,16 +201,12 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
     }
   },
   play() {
-    const promise = get().videoEl.play()
-
-    if (promise) {
-      promise.catch()
-    }
-    set((_) => ({ isPlaying: true }))
+    get().videoEl.play()
+    set((_) => ({ isPlaying: true, isPaused: false }))
   },
   pause() {
     get().videoEl.pause()
-    set((_) => ({ isPlaying: false }))
+    set((_) => ({ isPlaying: false, isPaused: true }))
   },
   seek(val: number) {
     const time = Math.min(
