@@ -13,7 +13,7 @@ type ProgressStore = {
 }
 
 export const useProgressStore = create<ProgressStore>()(
-  immer<ProgressStore>((set, get) => ({
+  immer<ProgressStore>((set, _) => ({
     setDraggingTime(time: number) {
       set((state) => {
         state.progress.draggingTime = time
