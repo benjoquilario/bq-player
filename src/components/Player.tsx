@@ -3,15 +3,19 @@ import Video, { type VideoProps } from "./Video"
 import { usePlayerStore } from "@/store/player"
 import Subtitle from "./Subtitle"
 import { type Subtitle as ISubtitle } from "@/store/player"
-import { type Source } from "@/types"
 import TimeSlider from "./Slider"
+import { Controller } from "./Controller"
+import Time from "./Time"
+import PlayPauseButton from "./button/PlayPauseButton"
+import SkipButton from "./button/SkipButton"
 
 type PlayerProps = {
-  sources: Source[]
   subtitles?: ISubtitle[]
+  skipSeconds?: number
 } & VideoProps
 
 const Player = React.forwardRef<HTMLVideoElement, PlayerProps>((props, ref) => {
+  const { skipSeconds = 10 } = props
   const divEl = useRef<HTMLDivElement>(null)
   const {
     addPlayerEventListeners,
@@ -58,14 +62,23 @@ const Player = React.forwardRef<HTMLVideoElement, PlayerProps>((props, ref) => {
   return (
     <>
       <div
-        className="relative h-screen overflow-hidden"
+        className="relative h-screen overflow-hidden bg-black"
         ref={divEl}
         style={{ position: "relative", overflow: "hidden" }}
       >
         <Video ref={ref} {...props} />
 
         <Subtitle />
-        <TimeSlider />
+        <Controller>
+          <TimeSlider />
+          <div className="flex justify-between px-4 py-2">
+            <div className="flex items-center gap-2">
+              <PlayPauseButton />
+              <SkipButton skipSeconds={skipSeconds} />
+              <Time />
+            </div>
+          </div>
+        </Controller>
       </div>
       {/* <div>
         <button onClick={() => changeSource("audio")}>Ep 1</button>
