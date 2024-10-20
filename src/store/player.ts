@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from "zustand"
+import { useProgressStore } from "./progress"
 
 export type Subtitle = {
   file: string
@@ -36,6 +37,7 @@ type PlayerStore = {
   currentSubtitle: string
   setSubtitles: (subtitles: Subtitle[]) => void
   setCurrentSubtitle: (subtitle: string) => void
+  seek: (val: number) => void
 }
 
 export const usePlayerStore = create<PlayerStore>()((set, get) => ({
@@ -138,6 +140,8 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
       videoEl,
     }))
 
+    useProgressStore.getState().addProgressEventListeners(videoEl)
+
     videoEl.addEventListener("play", () => {
       set((_) => ({ isPlaying: true, isPaused: false }))
     })
@@ -206,5 +210,17 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
   pause() {
     get().videoEl.pause()
     set((_) => ({ isPlaying: false }))
+  },
+  seek(val: number) {
+    const time = Math.min(
+      useProgressStore.getState().progress.duration,
+      Math.max(0, val)
+    )
+    get().videoEl.currentTime = time
+    useProgressStore.setState((state) => {
+      state.progress.draggingTime = -1
+      state.progress.time = time
+      return state
+    })
   },
 }))

@@ -4,6 +4,7 @@ import { usePlayerStore } from "@/store/player"
 import Subtitle from "./Subtitle"
 import { type Subtitle as ISubtitle } from "@/store/player"
 import { type Source } from "@/types"
+import TimeSlider from "./Slider"
 
 type PlayerProps = {
   sources: Source[]
@@ -20,7 +21,6 @@ const Player = React.forwardRef<HTMLVideoElement, PlayerProps>((props, ref) => {
     setSubtitles,
     currentQuality,
   } = usePlayerStore()
-  const [src, setSrc] = useState("")
 
   const defaultQualities = useMemo(
     () =>
@@ -47,12 +47,6 @@ const Player = React.forwardRef<HTMLVideoElement, PlayerProps>((props, ref) => {
   }, [])
 
   useEffect(() => {
-    // Initialize src.
-
-    setSrc(props.sources[0].file)
-  }, [])
-
-  useEffect(() => {
     if (!divEl.current) return
 
     setQualities(defaultState.qualities)
@@ -61,30 +55,6 @@ const Player = React.forwardRef<HTMLVideoElement, PlayerProps>((props, ref) => {
     setCurrentQuality(currentQuality || defaultState.qualities[0])
   }, [])
 
-  function changeSource(type: string) {
-    switch (type) {
-      case "audio":
-        setSrc(
-          "https://www088.anzeat.pro/streamhls/0b594d900f47daabc194844092384914/ep.1.1703914189.m3u8"
-        )
-        break
-      case "video":
-        setSrc(
-          "https://www114.anzeat.pro/streamhls/0b594d900f47daabc194844092384914/ep.2.1709232111.m3u8"
-        )
-        break
-      case "hls":
-        setSrc("https://files.vidstack.io/sprite-fight/hls/stream.m3u8")
-        break
-      case "youtube":
-        setSrc("youtube/_cMxraX_5RE")
-        break
-      case "vimeo":
-        setSrc("vimeo/640499893")
-        break
-    }
-  }
-
   return (
     <>
       <div
@@ -92,14 +62,15 @@ const Player = React.forwardRef<HTMLVideoElement, PlayerProps>((props, ref) => {
         ref={divEl}
         style={{ position: "relative", overflow: "hidden" }}
       >
-        <Video ref={ref} {...props} src={src} playsInline autoPlay={true} />
+        <Video ref={ref} {...props} />
 
         <Subtitle />
+        <TimeSlider />
       </div>
-      <div>
+      {/* <div>
         <button onClick={() => changeSource("audio")}>Ep 1</button>
         <button onClick={() => changeSource("video")}>Ep 2</button>
-      </div>
+      </div> */}
     </>
   )
 })

@@ -21,6 +21,9 @@ function App() {
           language: "English",
         },
       ]}
+      playsInline
+      autoPlay={true}
+      controls
     />
   )
 }

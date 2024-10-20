@@ -1,17 +1,26 @@
-import { useSliderStore } from "@/store/slider"
-import { useEffect, useRef } from "react"
+import { usePlayerStore } from "@/store/player"
+import { Slider } from "./ui/slider"
+import { useProgressStore } from "@/store/progress"
 
-const Slider = () => {
-  const sliderRef = useRef<HTMLDivElement>(null)
+const TimeSlider = () => {
+  const seek = usePlayerStore((store) => store.seek)
 
-  const { addSliderEventListeners } = useSliderStore()
+  const {
+    progress: { buffered, draggingTime, duration, time },
+    setDraggingTime,
+  } = useProgressStore()
 
-  useEffect(() => {
-    if (!sliderRef.current) return
-
-    addSliderEventListeners(sliderRef.current)
-  }, [])
-
-  return <div ref={sliderRef}>Slider</div>
+  return (
+    <Slider
+      max={duration}
+      step={1}
+      value={[draggingTime == -1 ? time : draggingTime]}
+      onPointerDown={() => setDraggingTime(time)}
+      onValueChange={(value) => setDraggingTime(value[0])}
+      onValueCommit={(value) => {
+        seek(value[0])
+      }}
+    />
+  )
 }
-export default Slider
+export default TimeSlider
