@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from "react"
+import React, { useRef, useEffect, useMemo } from "react"
 import Video, { type VideoProps } from "./Video"
 import { usePlayerStore } from "@/store/player"
 import Subtitle from "./Subtitle"
@@ -8,14 +8,13 @@ import { Controller } from "./Controller"
 import Time from "./Time"
 import PlayPauseButton from "./button/PlayPauseButton"
 import SkipButton from "./button/SkipButton"
+import Volume from "./Volume"
 
 type PlayerProps = {
   subtitles?: ISubtitle[]
-  skipSeconds?: number
 } & VideoProps
 
 const Player = React.forwardRef<HTMLVideoElement, PlayerProps>((props, ref) => {
-  const { skipSeconds = 10 } = props
   const divEl = useRef<HTMLDivElement>(null)
   const {
     addPlayerEventListeners,
@@ -71,11 +70,16 @@ const Player = React.forwardRef<HTMLVideoElement, PlayerProps>((props, ref) => {
         <Subtitle />
         <Controller>
           <TimeSlider />
-          <div className="flex justify-between px-4 py-2">
-            <div className="flex items-center gap-2">
+          <div className="flex w-full items-center justify-between px-4 py-2">
+            <div className="flex items-center">
               <PlayPauseButton />
-              <SkipButton skipSeconds={skipSeconds} />
+              <SkipButton />
+              <Volume />
               <Time />
+            </div>
+            <div className="flex items-center">
+              <button>Qualities</button>
+              <button>Subtitles</button>
             </div>
           </div>
         </Controller>

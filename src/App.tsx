@@ -23,7 +23,6 @@ function App() {
       ]}
       playsInline
       autoPlay={true}
-      skipSeconds={10}
     />
   )
 }
