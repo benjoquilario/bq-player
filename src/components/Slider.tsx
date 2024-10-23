@@ -11,16 +11,30 @@ const TimeSlider = () => {
   } = useProgressStore()
 
   return (
-    <Slider
-      max={duration}
-      step={1}
-      value={[draggingTime == -1 ? time : draggingTime]}
-      onPointerDown={() => setDraggingTime(time)}
-      onValueChange={(value) => setDraggingTime(value[0])}
-      onValueCommit={(value) => {
-        seek(value[0])
-      }}
-    />
+    <div className="relative">
+      {buffered.map((b) => (
+        <div
+          key={b.start}
+          style={{
+            position: "absolute",
+            left: `${(b.start / duration) * 100}%`,
+            width: `${((b.end - b.start) / duration) * 100}%`,
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.3)",
+          }}
+        />
+      ))}
+      <Slider
+        max={duration}
+        step={1}
+        value={[draggingTime == -1 ? time : draggingTime]}
+        onPointerDown={() => setDraggingTime(time)}
+        onValueChange={(value) => setDraggingTime(value[0])}
+        onValueCommit={(value) => {
+          seek(value[0])
+        }}
+      />
+    </div>
   )
 }
 export default TimeSlider
