@@ -38,6 +38,7 @@ type PlayerStore = {
   setSubtitles: (subtitles: Subtitle[]) => void
   setCurrentSubtitle: (subtitle: string) => void
   seek: (val: number) => void
+  volumeChange: (percent: number) => void
 }
 
 export const usePlayerStore = create<PlayerStore>()((set, get) => ({
@@ -73,7 +74,7 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
   skipForwardSeconds: (seconds: number) => {
     if (get().videoEl) {
       const current = get().videoEl.currentTime
-      
+
       if (current + seconds >= get().videoEl.duration) {
         get().videoEl.currentTime = get().videoEl.duration
         set((_) => ({ progress: get().videoEl.duration }))
@@ -81,7 +82,7 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
       }
 
       get().videoEl.currentTime += seconds
-      set((_)=> ({ progress: current + seconds }))
+      set((_) => ({ progress: current + seconds }))
     }
   },
   skipBackwardSeconds: (seconds: number) => {
@@ -133,7 +134,7 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
       clearTimeout(timer)
       timer = setTimeout(() => {
         set((_) => ({ showControls: false }))
-      }, 2500)
+      }, 111500)
     })
   },
   addVideoEventListeners: (videoEl) => {
@@ -147,26 +148,26 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
       set((_) => ({ isPlaying: true, isPaused: false }))
     })
     videoEl.addEventListener("pause", () => {
-      set((_) => ({ isPlaying: false, isPaused: false, showControls: true }))
+      set((_) => ({ isPlaying: false, isPaused: true, showControls: true }))
     })
     videoEl.addEventListener("ended", () => {
-      set((_) => ({ isPlaying: false, isPaused: false, showControls: true }))
+      set((_) => ({ isPlaying: false, isPaused: true, showControls: true }))
     })
     videoEl.addEventListener("click", () => {
       if (get().isPlaying) {
         videoEl.pause()
         get().videoEl.pause()
-        set((_) => ({ isPaused: true }))
+        set((_) => ({ isPaused: true, isPlaying: false }))
       } else {
         videoEl.play()
-        set((_) => ({ isPaused: false }))
+        set((_) => ({ isPaused: false, isPlaying: true }))
       }
     })
     videoEl.addEventListener("pause", () => {
       set((_) => ({ isPaused: true }))
     })
     videoEl.addEventListener("playing", () => {
-      set((_) => ({ isLoading: false, isPlaying: true }))
+      set((_) => ({ isLoading: false, isPlaying: true, isPaused: false }))
     })
     videoEl.addEventListener("waiting", () => {
       set((_) => ({ isLoading: true }))
@@ -199,6 +200,11 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
     } else {
       get().play()
     }
+  },
+  volumeChange(percent: number) {
+    if (!get().videoEl) return
+    get().volume = percent
+    get().videoEl.volume = percent / 100
   },
   play() {
     get().videoEl.play()
