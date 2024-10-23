@@ -13,24 +13,26 @@ const PlayPauseButton = () => {
   }
 
   return (
-    <Button
-      size="icon"
-      className="h-6 w-6 text-white hover:bg-transparent"
-      variant="ghost"
-      onClick={handleClick}
-    >
-      {isPaused ? (
-        <FaPlay
-          style={{ height: "100%", width: "100%" }}
-          className="text-white"
-        />
-      ) : (
-        <FaPause
-          style={{ height: "100%", width: "100%" }}
-          className="text-white"
-        />
-      )}
-    </Button>
+    <div className="inline-flex items-center justify-center">
+      <Button
+        size="icon"
+        className="h-10 w-10 p-2 text-white hover:bg-white/50"
+        variant="ghost"
+        onClick={handleClick}
+      >
+        {isPaused ? (
+          <FaPlay
+            style={{ height: "100%", width: "100%" }}
+            className="text-white"
+          />
+        ) : (
+          <FaPause
+            style={{ height: "100%", width: "100%" }}
+            className="text-white"
+          />
+        )}
+      </Button>
+    </div>
   )
 }
 export default PlayPauseButton

@@ -6,22 +6,22 @@ type SkipButtonProps = {
   skipSeconds?: number
 }
 
-const SkipButton: React.FC<SkipButtonProps> = ({ skipSeconds = 10 }) => {
+const SkipButton: React.FC<SkipButtonProps> = () => {
   const { skipForwardSeconds, skipBackwardSeconds } = usePlayerStore()
 
   return (
-    <div className="ml-2 flex items-center gap-2">
+    <div className="ml-2 flex items-center gap-1">
       <Button
-        className="h-9 w-8 p-0.5 text-white hover:bg-transparent hover:text-white"
-        onClick={() => skipBackwardSeconds(skipSeconds)}
-        variant="ghost"
+        className="h-10 w-10 p-2"
+        onClick={() => skipBackwardSeconds(10)}
+        variant="opacity"
       >
         <GrBackTen style={{ height: "100%", width: "100%" }} />
       </Button>
       <Button
-        className="h-8 w-8 p-0.5 text-white hover:bg-transparent hover:text-white"
-        onClick={() => skipForwardSeconds(skipSeconds)}
-        variant="ghost"
+        className="h-10 w-10 p-2"
+        onClick={() => skipForwardSeconds(10)}
+        variant="opacity"
       >
         <GrForwardTen style={{ height: "100%", width: "100%" }} />
       </Button>
