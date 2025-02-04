@@ -81,3 +81,11 @@
       "calt" 1;
   }
 }
+
+@font-face {
+  font-family: "GeistVF";
+  src:
+    local("GeistVF"),
+    url("./assets/fonts/GeistVF.woff") format("truetype");
+  font-weight: 200 300 400 500;
+}

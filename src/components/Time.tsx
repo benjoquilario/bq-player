@@ -1,5 +1,4 @@
 import { useProgressStore } from "@/store/progress"
-import { Button } from "./ui/button"
 import { formatTime } from "@/lib/utils"
 
 const Time = () => {
@@ -9,10 +8,10 @@ const Time = () => {
 
   return (
     <div>
-      <Button variant="ghost" className="hover:bg-transparent hover:text-white">
-        {formatTime(draggingTime > 0 ? draggingTime : time)} /{" "}
-        {formatTime(duration)}
-      </Button>
+      <div className="flex items-center text-gray-50">
+        <span>{formatTime(draggingTime > 0 ? draggingTime : time)}</span> /{" "}
+        <span>{formatTime(duration)}</span>
+      </div>
     </div>
   )
 }

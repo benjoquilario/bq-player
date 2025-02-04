@@ -16,6 +16,8 @@ type PlayerStore = {
   videoEl: HTMLVideoElement
   addPlayerEventListeners: (el: HTMLDivElement) => void
   addVideoEventListeners: (el: HTMLVideoElement) => void
+  showVolumeListener: (el: HTMLDivElement) => void
+  volumeEl: HTMLDivElement
   isPlaying: boolean
   showControls: boolean
   isPaused: boolean
@@ -39,6 +41,7 @@ type PlayerStore = {
   setCurrentSubtitle: (subtitle: string) => void
   seek: (val: number) => void
   volumeChange: (percent: number) => void
+  showVolume: boolean
 }
 
 export const usePlayerStore = create<PlayerStore>()((set, get) => ({
@@ -55,6 +58,25 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
   progress: 0,
   currentSubtitle: "",
   subtitles: [],
+  showVolume: false,
+  volumeEl: null as any,
+  showVolumeListener: (root: HTMLDivElement) => {
+    let timer: any
+
+    set((_) => ({
+      volumeEl: root,
+    }))
+
+    root.addEventListener("mouseenter", () => {
+      clearTimeout(timer)
+      set((_) => ({ showVolume: true }))
+    })
+    root.addEventListener("mouseleave", () => {
+      timer = setTimeout(() => {
+        set((_) => ({ showVolume: false }))
+      }, 500)
+    })
+  },
   setCurrentQuality: (quality: string) => {
     set((_) => ({ currentQuality: quality }))
   },
@@ -134,7 +156,7 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
       clearTimeout(timer)
       timer = setTimeout(() => {
         set((_) => ({ showControls: false }))
-      }, 111500)
+      }, 33500)
     })
   },
   addVideoEventListeners: (videoEl) => {

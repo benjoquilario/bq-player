@@ -7,8 +7,11 @@ import TimeSlider from "./Slider"
 import { Controller } from "./Controller"
 import Time from "./Time"
 import PlayPauseButton from "./button/PlayPauseButton"
-import SkipButton from "./button/SkipButton"
+// import SkipButton from "./button/SkipButton"
 import Volume from "./Volume"
+import FullScreen from "./button/FullScreen"
+import CaptionButton from "./button/Caption"
+import SettingButton from "./button/Settings"
 
 type PlayerProps = {
   subtitles?: ISubtitle[]
@@ -71,15 +74,18 @@ const Player = React.forwardRef<HTMLVideoElement, PlayerProps>((props, ref) => {
         <Controller>
           <TimeSlider />
           <div className="flex w-full items-center justify-between px-4 py-2">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-2">
               <PlayPauseButton />
-              <SkipButton />
+              {/* <SkipButton /> */}
               <Volume />
               <Time />
             </div>
-            <div className="flex items-center">
-              <button>Qualities</button>
-              <button>Subtitles</button>
+            <div className="flex items-center space-x-3">
+              {/* <button>Qualities</button> */}
+
+              <CaptionButton />
+              <SettingButton />
+              <FullScreen />
             </div>
           </div>
         </Controller>

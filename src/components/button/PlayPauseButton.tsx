@@ -1,6 +1,6 @@
 import { usePlayerStore } from "@/store/player"
-import { Button } from "../ui/button"
 import { FaPlay, FaPause } from "react-icons/fa"
+import IconTooltip from "../IconTooltip"
 
 const PlayPauseButton = () => {
   const { isPaused, videoEl, play, pause } = usePlayerStore()
@@ -14,24 +14,15 @@ const PlayPauseButton = () => {
 
   return (
     <div className="inline-flex items-center justify-center">
-      <Button
-        size="icon"
-        className="h-10 w-10 p-2 text-white hover:bg-white/50"
-        variant="ghost"
-        onClick={handleClick}
-      >
-        {isPaused ? (
-          <FaPlay
-            style={{ height: "100%", width: "100%" }}
-            className="text-white"
-          />
-        ) : (
-          <FaPause
-            style={{ height: "100%", width: "100%" }}
-            className="text-white"
-          />
-        )}
-      </Button>
+      <IconTooltip content={isPaused ? "Play" : "Pause"}>
+        <button className="" onClick={handleClick}>
+          {isPaused ? (
+            <FaPlay className="size-5 text-white" />
+          ) : (
+            <FaPause className="size-5 text-white" />
+          )}
+        </button>
+      </IconTooltip>
     </div>
   )
 }
