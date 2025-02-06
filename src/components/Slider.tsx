@@ -20,8 +20,8 @@ const TimeSlider = () => {
             left: `${(b.start / duration) * 100}%`,
             width: `${((b.end - b.start) / duration) * 100}%`,
             height: "100%",
-            backgroundColor: "rgba(255, 255, 255, 0.3)",
           }}
+          className="bg-gray-400"
         />
       ))}
       <Slider
