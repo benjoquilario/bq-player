@@ -1,8 +1,8 @@
 import { usePlayerStore } from "@/store/player"
 import { Slider } from "./ui/slider"
 import * as React from "react"
-import { MdVolumeUp, MdVolumeOff } from "react-icons/md"
 import IconTooltip from "./IconTooltip"
+import { Volume2, VolumeX } from "lucide-react"
 
 const Volume = () => {
   const { volume, videoEl, showVolumeListener, showVolume } = usePlayerStore()
@@ -40,9 +40,9 @@ const Volume = () => {
       <IconTooltip content={volume === 0 ? "Unmute" : "mute"}>
         <button onClick={handleClick}>
           {volume === 0 ? (
-            <MdVolumeOff className="size-7 text-white" />
+            <VolumeX className="size-6" />
           ) : (
-            <MdVolumeUp className="size-7 text-white" />
+            <Volume2 className="size-6" />
           )}
         </button>
       </IconTooltip>
@@ -57,7 +57,7 @@ const Volume = () => {
             onPointerDown={() => console.log("pointer down")}
             onValueChange={(value) => handleVolumeChange(value[0])}
             // onValueCommit={(value) => console.log(value)}
-            className="relative z-10 flex w-[52px] cursor-pointer"
+            className="relative z-10 flex w-[56px] cursor-pointer"
           />
         </div>
       )}
