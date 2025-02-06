@@ -15,7 +15,7 @@ import SettingsMenu from "./button/Settings"
 import { Play, Pause, SkipForward, SkipBack } from "lucide-react"
 import { isMobile } from "@/lib/utils"
 
-type PlayerProps = {
+export type PlayerProps = {
   subtitles?: ISubtitle[]
 } & VideoProps
 
