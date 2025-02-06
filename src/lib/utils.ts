@@ -1,6 +1,10 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
 export function parseNumberFromString(str: string) {
   return Number(str.replace(/[^0-9]/g, ""))
 }
@@ -25,6 +29,5 @@ export const isValidUrl = (url: string) => {
   return !!pattern.test(url)
 }
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+export const isMobile = () =>
+  /iPhone|iPad|iPod|Android/i.test(window?.navigator?.userAgent)
