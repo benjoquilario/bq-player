@@ -1,5 +1,6 @@
 {
   "name": "bq-player",
+  "homepage": "https://benjoquilario.github.io/bq-player",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -9,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@plussub/srt-vtt-parser": "^2.0.5",
@@ -58,6 +59,5 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.7.0",
     "vite": "^5.4.8"
-  },
-  "homepage": "https://benjoquilario.github.io/bq-player"
+  }
 }
