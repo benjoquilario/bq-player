@@ -20,13 +20,15 @@ type PlayerStore = {
   volumeEl: HTMLDivElement
   isPlaying: boolean
   showControls: boolean
+  setShowControls: (show: boolean) => void
   isPaused: boolean
   isLoading: boolean
   volume: number
-  playbackRate: number
-  setPlaybackRate: (rate: number) => void
+  playbackSpeed: number
+  setPlaybackSpeed: (rate: number) => void
   pause: () => void
   play: () => void
+  togglePlay: () => void
   skipForwardSeconds: (seconds: number) => void
   skipBackwardSeconds: (seconds: number) => void
   qualities: string[]
@@ -48,17 +50,20 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
   playerEl: null as any,
   videoEl: null as any,
   isPlaying: false,
-  showControls: false,
+  showControls: true,
   isPaused: false,
   isLoading: false,
   volume: 1,
-  playbackRate: 1,
+  playbackSpeed: 1,
   qualities: [],
   currentQuality: "",
   progress: 0,
   currentSubtitle: "",
   subtitles: [],
   showVolume: false,
+  setShowControls: (show: boolean) => {
+    set((_) => ({ showControls: show }))
+  },
   volumeEl: null as any,
   showVolumeListener: (root: HTMLDivElement) => {
     let timer: any
@@ -121,10 +126,10 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
       set((_) => ({ progress: current - seconds }))
     }
   },
-  setPlaybackRate: (rate: number) => {
+  setPlaybackSpeed: (rate: number) => {
     if (get().videoEl) {
       get().videoEl.playbackRate = rate
-      set((_) => ({ playbackRate: rate }))
+      set((_) => ({ playbackSpeed: rate }))
     }
   },
   toggleFullScreen: () => {
@@ -138,26 +143,9 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
   },
   isFullScreen: false,
   addPlayerEventListeners: (root) => {
-    let timer: any
-
     set((_) => ({
       playerEl: root,
     }))
-
-    root.addEventListener("mouseenter", () => {
-      if (!get().isPlaying) return
-
-      clearTimeout(timer)
-      set((_) => ({ showControls: true }))
-    })
-    root.addEventListener("mouseleave", () => {
-      if (!get().isPlaying) return
-
-      clearTimeout(timer)
-      timer = setTimeout(() => {
-        set((_) => ({ showControls: false }))
-      }, 33500)
-    })
   },
   addVideoEventListeners: (videoEl) => {
     set((_) => ({
@@ -175,22 +163,11 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
     videoEl.addEventListener("ended", () => {
       set((_) => ({ isPlaying: false, isPaused: true, showControls: true }))
     })
-    videoEl.addEventListener("click", () => {
-      if (get().isPlaying) {
-        videoEl.pause()
-        get().videoEl.pause()
-        set((_) => ({ isPaused: true, isPlaying: false }))
-      } else {
-        videoEl.play()
-        set((_) => ({ isPaused: false, isPlaying: true }))
-      }
-    })
+
     videoEl.addEventListener("pause", () => {
       set((_) => ({ isPaused: true }))
     })
-    videoEl.addEventListener("playing", () => {
-      set((_) => ({ isLoading: false, isPlaying: true, isPaused: false }))
-    })
+
     videoEl.addEventListener("waiting", () => {
       set((_) => ({ isLoading: true }))
     })
@@ -203,7 +180,7 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
     })
 
     videoEl.addEventListener("ratechange", () => {
-      set((_) => ({ playbackRate: videoEl.playbackRate }))
+      set((_) => ({ playbackSpeed: videoEl.playbackRate }))
     })
 
     videoEl.addEventListener("fullscreenchange", () => {
